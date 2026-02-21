@@ -1,6 +1,7 @@
 import { Github, Linkedin, Mail, ArrowDown, Download } from 'lucide-react';
 import { ThreeBackground } from './ThreeBackground';
 import { motion } from 'motion/react';
+import Akhil_resume from '../assests/Akhil_resume.pdf';
 
 export function Hero() {
   const scrollToSection = (sectionId: string) => {
@@ -60,8 +61,8 @@ export function Hero() {
                 Hire Me
               </button>
               <a
-                href="#"
-                download
+                href={Akhil_resume}
+                download="akhil_resume.pdf"
                 className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white rounded-xl hover:bg-white/20 transition-all border border-white/20 hover:scale-105 font-medium flex items-center gap-2"
               >
                 <Download size={20} />
@@ -71,7 +72,7 @@ export function Hero() {
 
             <div className="flex items-center gap-4">
               <a
-                href="https://github.com"
+                href="https://github.com/Akhil0045"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/20 transition-all border border-white/20 hover:scale-110"

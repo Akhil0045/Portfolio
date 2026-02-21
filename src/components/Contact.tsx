@@ -109,14 +109,14 @@ export function Contact() {
                   </div>
                 </a>
 
-                <a href="tel:+91XXXXXXXXXX" className="flex items-start gap-4 group">
+                <a href="tel:+91 9044109957" className="flex items-start gap-4 group">
                   <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                     <Phone className="text-white" size={20} />
                   </div>
                   <div>
                     <p className="text-sm text-gray-400 mb-1">Phone</p>
                     <p className="text-white font-medium group-hover:text-gray-200 transition-colors">
-                      +91 XXXXX XXXXX
+                      +91 9044109957
                     </p>
                   </div>
                 </a>
@@ -136,7 +136,7 @@ export function Contact() {
                 <p className="text-gray-300 mb-4 font-medium">Connect with me on</p>
                 <div className="flex gap-3">
                   <a
-                    href="https://github.com"
+                    href="https://github.com/Akhil0045"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-12 h-12 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110"
@@ -144,7 +144,7 @@ export function Contact() {
                     <Github size={20} />
                   </a>
                   <a
-                    href="https://linkedin.com"
+                    href="https://www.linkedin.com/in/akhil-kumar-024562275/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-12 h-12 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110"
