@@ -46,38 +46,43 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-2">
-            {['Home', 'About', 'Skills', 'Projects', 'Contact'].map((item) => (
-              <button
-                key={item}
-                onClick={() => scrollToSection(item.toLowerCase())}
-                className={`px-4 py-2.5 rounded-lg transition-all ${scrolled
+          <div className="hidden md:flex items-center gap-6">
+            <div className="flex items-center gap-1">
+              {['Home', 'About', 'Skills', 'Projects', 'Contact'].map((item) => (
+                <button
+                  key={item}
+                  onClick={() => scrollToSection(item.toLowerCase())}
+                  className={`px-4 py-2.5 rounded-lg transition-all ${scrolled
+                    ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
+                    : 'text-white/90 hover:text-white hover:bg-white/10'
+                    }`}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-3 pl-2 border-l border-white/5">
+              <Link
+                to="/chat"
+                className={`px-4 py-2.5 rounded-lg transition-all flex items-center gap-2.5 ${scrolled
                   ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
                   : 'text-white/90 hover:text-white hover:bg-white/10'
                   }`}
               >
-                {item}
-              </button>
-            ))}
-            <Link
-              to="/chat"
-              className={`px-4 py-2.5 rounded-lg transition-all flex items-center gap-2.5 ${scrolled
-                ? 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
-                : 'text-white/90 hover:text-white hover:bg-white/10'
-                }`}
-            >
-              <Bot size={18} strokeWidth={1.5} className="shrink-0" />
-              <span>Assistant</span>
-            </Link>
-            <a
-              href="#contact"
-              className={`ml-2 px-6 py-2.5 rounded-lg transition-all font-medium ${scrolled
-                ? 'bg-gray-900 text-white hover:bg-gray-800'
-                : 'bg-white text-gray-900 hover:bg-gray-100'
-                }`}
-            >
-              Hire Me
-            </a>
+                <Bot size={18} strokeWidth={1.5} className="shrink-0" />
+                <span>Assistant</span>
+              </Link>
+              <a
+                href="#contact"
+                className={`px-6 py-2.5 rounded-lg transition-all font-medium ${scrolled
+                  ? 'bg-gray-900 text-white hover:bg-gray-800'
+                  : 'bg-white text-gray-900 hover:bg-gray-100'
+                  }`}
+              >
+                Hire Me
+              </a>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}

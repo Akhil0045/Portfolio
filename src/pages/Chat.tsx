@@ -39,14 +39,7 @@ const SUGGEST_CHIPS = [
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function Chat() {
-  const [messages, setMessages] = useState<Message[]>(() => {
-    try {
-      const saved = localStorage.getItem('chat_history');
-      return saved ? JSON.parse(saved) : [INITIAL_MESSAGE];
-    } catch {
-      return [INITIAL_MESSAGE];
-    }
-  });
+  const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
 
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -56,19 +49,44 @@ export function Chat() {
 
   const showChips = messages.length <= 1 && !isLoading;
 
-  // Session ID — persisted across reloads
-  const [sessionId] = useState(() => {
-    const saved = localStorage.getItem('chat_session_id');
-    if (saved) return saved;
-    const newId = Math.random().toString(36).substring(7);
-    localStorage.setItem('chat_session_id', newId);
-    return newId;
-  });
+  // Session ID & Expiration Logic
+  const [sessionId, setSessionId] = useState('');
+  const SESSION_TTL = 60 * 60 * 1000; // 1 hour in ms
 
-  // Persist messages
   useEffect(() => {
-    localStorage.setItem('chat_history', JSON.stringify(messages));
-  }, [messages]);
+    const savedId = localStorage.getItem('chat_session_id');
+    const savedTime = localStorage.getItem('chat_session_timestamp');
+    const now = Date.now();
+
+    if (savedId && savedTime && now - parseInt(savedTime) < SESSION_TTL) {
+      // Restore valid session
+      setSessionId(savedId);
+      restoreHistory(savedId);
+    } else {
+      // New session
+      const newId = crypto.randomUUID();
+      setSessionId(newId);
+      localStorage.setItem('chat_session_id', newId);
+      localStorage.setItem('chat_session_timestamp', now.toString());
+    }
+  }, []);
+
+  const restoreHistory = async (id: string) => {
+    const envUrl = (import.meta as any).env?.VITE_BACKEND_URL;
+    const baseUrl = (envUrl || 'http://localhost:8000').replace(/\/$/, '');
+
+    try {
+      const response = await fetch(`${baseUrl}/chat/history/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.history && data.history.length > 0) {
+          setMessages([INITIAL_MESSAGE, ...data.history]);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to restore history:', error);
+    }
+  };
 
   // Scroll to bottom on new messages
   useEffect(() => {
@@ -90,6 +108,9 @@ export function Chat() {
 
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsLoading(true);
+
+    // Update session timestamp
+    localStorage.setItem('chat_session_timestamp', Date.now().toString());
 
     const envUrl = (import.meta as any).env?.VITE_BACKEND_URL;
     const baseUrl = (envUrl || 'http://localhost:8000').replace(/\/$/, '');

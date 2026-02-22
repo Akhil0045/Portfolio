@@ -38,6 +38,16 @@ class ChatRequest(BaseModel):
     session_id: str
     message: str
 
+@app.get("/chat/history/{session_id}")
+async def get_history(session_id: str):
+    history = await get_chat_history(session_id)
+    # Filter out MongoDB internal IDs for frontend compatibility
+    formatted_history = [
+        {"role": msg["role"], "content": msg["content"]} 
+        for msg in history
+    ]
+    return {"history": formatted_history}
+
 @app.post("/chat")
 async def chat(request: ChatRequest):
     session_id = request.session_id
@@ -121,4 +131,4 @@ async def chat(request: ChatRequest):
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
