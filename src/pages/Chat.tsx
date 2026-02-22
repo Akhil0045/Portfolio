@@ -1,34 +1,62 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Send, Bot, Trash2 } from 'lucide-react';
+import { ArrowLeft, Send, Trash2, Terminal, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import './Chat.css';
+
+// ─── Types ──────────────────────────────────────────────────────────────────
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
-// Custom components for Markdown rendering to maintain theme
+// ─── Markdown Components ─────────────────────────────────────────────────────
+
 const MarkdownComponents = {
-  p: ({ children }: any) => <p className="mb-2 last:mb-0">{children}</p>,
-  strong: ({ children }: any) => <strong className="font-semibold text-white">{children}</strong>,
-  ul: ({ children }: any) => <ul className="list-disc ml-4 mb-2 space-y-1">{children}</ul>,
-  ol: ({ children }: any) => <ol className="list-decimal ml-4 mb-2 space-y-1">{children}</ol>,
-  li: ({ children }: any) => <li className="text-gray-200">{children}</li>,
-  code: ({ children }: any) => <code className="bg-gray-800 px-1.5 py-0.5 rounded text-gray-200 font-mono text-sm">{children}</code>,
+  p: ({ children }: any) => <p>{children}</p>,
+  strong: ({ children }: any) => <strong>{children}</strong>,
+  ul: ({ children }: any) => <ul>{children}</ul>,
+  ol: ({ children }: any) => <ol>{children}</ol>,
+  li: ({ children }: any) => <li>{children}</li>,
+  code: ({ children }: any) => <code>{children}</code>,
 };
+
+// ─── Constants ───────────────────────────────────────────────────────────────
+
+const INITIAL_MESSAGE: Message = {
+  role: 'assistant',
+  content: "Hey! I'm Akhil's portfolio assistant. Ask me about his projects, skills, or how to get in touch.",
+};
+
+const SUGGEST_CHIPS = [
+  "What projects has Akhil built?",
+  "What are his core skills?",
+  "How can I reach him?",
+  "Summarize his experience",
+];
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 export function Chat() {
   const [messages, setMessages] = useState<Message[]>(() => {
-    const saved = localStorage.getItem('chat_history');
-    return saved ? JSON.parse(saved) : [
-      { role: 'assistant', content: "Hi! I'm Akhil's AI assistant. Ask me about his projects, skills, or how to get in touch. How can I help you today?" }
-    ];
+    try {
+      const saved = localStorage.getItem('chat_history');
+      return saved ? JSON.parse(saved) : [INITIAL_MESSAGE];
+    } catch {
+      return [INITIAL_MESSAGE];
+    }
   });
+
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const showChips = messages.length <= 1 && !isLoading;
+
+  // Session ID — persisted across reloads
   const [sessionId] = useState(() => {
     const saved = localStorage.getItem('chat_session_id');
     if (saved) return saved;
@@ -37,27 +65,38 @@ export function Chat() {
     return newId;
   });
 
+  // Persist messages
   useEffect(() => {
     localStorage.setItem('chat_history', JSON.stringify(messages));
   }, [messages]);
 
+  // Scroll to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  // ─── Send ──────────────────────────────────────────────────────────────────
 
-    const userMessage = input.trim();
+  const sendMessage = async (text: string) => {
+    const userMessage = text.trim();
+    if (!userMessage || isLoading) return;
+
     setInput('');
-    setMessages((prev) => [...prev, { role: 'user', content: userMessage }]);
+
+    // Reset textarea height
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+    }
+
+    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsLoading(true);
 
-    const envUrl = (import.meta as { env?: { VITE_BACKEND_URL?: string } }).env?.VITE_BACKEND_URL;
+    const envUrl = (import.meta as any).env?.VITE_BACKEND_URL;
     const baseUrl = (envUrl || 'http://localhost:8000').replace(/\/$/, '');
     const chatUrl = `${baseUrl}/chat`;
+
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 90000);
+    const timeoutId = setTimeout(() => controller.abort(), 90_000);
 
     try {
       const response = await fetch(chatUrl, {
@@ -66,141 +105,194 @@ export function Chat() {
         body: JSON.stringify({ session_id: sessionId, message: userMessage }),
         signal: controller.signal,
       });
+
       clearTimeout(timeoutId);
 
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
         const rawDetail = data?.detail;
-        const errorMsg = Array.isArray(rawDetail) ? rawDetail.join(', ') : (rawDetail || response.statusText || 'Request failed').toString();
+        const errorMsg = Array.isArray(rawDetail)
+          ? rawDetail.join(', ')
+          : (rawDetail || response.statusText || 'Request failed').toString();
         throw new Error(errorMsg);
       }
 
       const aiContent = data?.response;
+
       if (typeof aiContent === 'string') {
-        setMessages((prev) => [...prev, { role: 'assistant', content: aiContent }]);
+        setMessages(prev => [...prev, { role: 'assistant', content: aiContent }]);
       } else {
         throw new Error('Invalid response from server');
       }
     } catch (error) {
       clearTimeout(timeoutId);
+
       const err = error instanceof Error ? error : new Error('Unknown error');
       const isAbort = err.name === 'AbortError';
-      const msg = err.message || "Sorry, I'm having trouble connecting. Please try again later.";
-      const isNetworkError = msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('Load failed');
+      const msg = err.message || "Sorry, I'm having trouble connecting.";
+      const isNet = msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('Load failed');
+
       const displayMsg = isAbort
-        ? 'Request timed out. The AI may be slow—please try again.'
-        : isNetworkError
-          ? `Can't reach the backend at ${chatUrl}. Make sure it's running: cd d:\\portfolio_updated && python -m uvicorn backend.main:app --reload`
+        ? 'Request timed out. Please try again.'
+        : isNet
+          ? `Can't reach backend at ${chatUrl}. Make sure it's running.`
           : msg;
-      setMessages((prev) => [...prev, { role: 'assistant', content: displayMsg }]);
+
+      setMessages(prev => [...prev, { role: 'assistant', content: displayMsg }]);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleSend = () => sendMessage(input);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+    e.target.style.height = 'auto';
+    e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+  };
+
   const clearChat = () => {
-    setMessages([{ role: 'assistant', content: "Hi! I'm Akhil's AI assistant. Ask me about his projects, skills, or how to get in touch. How can I help you today?" }]);
+    setMessages([INITIAL_MESSAGE]);
     localStorage.removeItem('chat_history');
   };
 
-  return (
-    <div className="min-h-screen bg-gray-950 flex flex-col">
-      {/* Header - matches portfolio theme */}
-      <header className="shrink-0 border-b border-gray-800 bg-gray-900/80 backdrop-blur-xl sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
-          <div className="flex items-center justify-between gap-6">
-            <Link
-              to="/"
-              className="flex items-center gap-2.5 text-gray-400 hover:text-white transition-colors py-2 -my-2"
-            >
-              <ArrowLeft size={20} strokeWidth={2} className="shrink-0" />
-              <span className="text-sm font-medium hidden sm:inline">Back</span>
-            </Link>
+  // ─── Render ────────────────────────────────────────────────────────────────
 
-            <div className="flex items-center gap-4 flex-1 justify-center min-w-0">
-              <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                <Bot size={22} className="text-white" strokeWidth={1.5} />
-              </div>
-              <div className="min-w-0 text-left">
-                <h1 className="font-semibold text-white truncate text-base">Portfolio Assistant</h1>
-                <p className="text-xs text-gray-500 truncate mt-0.5">Chat freely — no login needed</p>
+  return (
+    <div className="chat-root">
+
+      {/* ── HEADER ── */}
+      <header className="chat-header">
+        <div className="chat-header-inner">
+
+          <Link to="/" className="back-btn">
+            <ArrowLeft size={14} strokeWidth={2} />
+            <span>Back</span>
+          </Link>
+
+          <div className="header-center">
+            <div className="header-icon">
+              <Terminal size={15} strokeWidth={2} />
+            </div>
+            <div>
+              <div className="header-title">akhil.assistant</div>
+              <div className="header-subtitle">
+                <span className="status-dot" />
+                <span>ready</span>
               </div>
             </div>
-
-            <button
-              onClick={clearChat}
-              className="p-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-colors shrink-0 -mr-1"
-              title="Clear chat"
-            >
-              <Trash2 size={20} strokeWidth={1.5} />
-            </button>
           </div>
+
+          <button onClick={clearChat} className="clear-btn" title="Clear chat">
+            <Trash2 size={15} strokeWidth={1.5} />
+          </button>
+
         </div>
       </header>
 
-      {/* Messages - clean, high-contrast dark theme */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-4 sm:space-y-5">
+      {/* ── MESSAGES ── */}
+      <div className="messages-area">
+        <div className="messages-inner">
+
+          <div className="date-divider">session start</div>
+
           {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              <div className={`max-w-[90%] sm:max-w-[85%] md:max-w-[80%] ${msg.role === 'user' ? 'ml-auto' : ''}`}>
-                <div className={`px-4 py-3 rounded-2xl text-sm sm:text-base leading-relaxed ${msg.role === 'user'
-                  ? 'bg-gray-600 text-white rounded-br-md shadow-sm'
-                  : 'bg-gray-700 text-white rounded-bl-md border border-gray-600 shadow-sm'
-                  }`}>
-                  {msg.role === 'assistant' ? (
+            <div key={i} className={`msg-row ${msg.role}`}>
+              {msg.role === 'assistant' ? (
+                <div className="assistant-block">
+                  <div className="assistant-avatar">
+                    <Sparkles size={12} strokeWidth={2} />
+                  </div>
+                  <div className="assistant-content">
                     <ReactMarkdown components={MarkdownComponents}>
                       {msg.content}
                     </ReactMarkdown>
-                  ) : (
-                    msg.content
-                  )}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="user-bubble">{msg.content}</div>
+              )}
             </div>
           ))}
+
           {isLoading && (
-            <div className="flex justify-start">
-              <div className="px-4 py-3 bg-gray-700 rounded-2xl rounded-bl-md border border-gray-600 flex gap-1.5">
-                <span className="w-2 h-2 bg-white/80 rounded-full animate-pulse" />
-                <span className="w-2 h-2 bg-white/80 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
-                <span className="w-2 h-2 bg-white/80 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
+            <div className="typing-row">
+              <div className="assistant-avatar" style={{ marginTop: 8 }}>
+                <Sparkles size={12} strokeWidth={2} />
+              </div>
+              <div className="typing-bubble">
+                <div className="typing-dot" />
+                <div className="typing-dot" />
+                <div className="typing-dot" />
               </div>
             </div>
           )}
+
           <div ref={messagesEndRef} />
+        </div>
+
+        {/* Suggestion chips — only shown on fresh session */}
+        {showChips && (
+          <div className="chips-section">
+            <div className="chips-label">suggestions</div>
+            <div className="chips-row">
+              {SUGGEST_CHIPS.map(chip => (
+                <button
+                  key={chip}
+                  className="chip"
+                  onClick={() => sendMessage(chip)}
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── INPUT ── */}
+      <div className="input-area">
+        <div className="input-inner">
+
+          <div className="input-box">
+            <span className="input-prefix">›</span>
+            <textarea
+              ref={inputRef}
+              className="input-field"
+              placeholder="Ask anything about Akhil..."
+              value={input}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              rows={1}
+            />
+            <button
+              className="send-btn"
+              onClick={handleSend}
+              disabled={isLoading || !input.trim()}
+            >
+              <Send size={15} strokeWidth={2.5} />
+            </button>
+          </div>
+
+          <div className="input-footer">
+            <span className="input-hint">no account needed · open access</span>
+            <span className="kbd">
+              <span>↵</span> send &nbsp;·&nbsp; <span>⇧↵</span> newline
+            </span>
+          </div>
+
         </div>
       </div>
 
-      {/* Input - clean dark theme */}
-      <div className="shrink-0 border-t border-gray-800 bg-gray-900/90 px-4 sm:px-6 py-5 sm:py-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Ask about projects, skills, or how to contact..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSend(); } }}
-              className="w-full h-12 sm:h-14 pl-4 sm:pl-5 pr-14 rounded-xl bg-gray-800 border border-gray-600 text-white placeholder-gray-500 text-base focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all"
-            />
-            <button
-              onClick={handleSend}
-              disabled={isLoading || !input.trim()}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-all flex items-center justify-center"
-            >
-              <Send size={20} strokeWidth={2} />
-            </button>
-          </div>
-          <p className="text-center text-gray-500 text-xs mt-3">
-            Anyone can chat — no sign-up needed
-          </p>
-        </div>
-      </div>
     </div>
   );
 }
