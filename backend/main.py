@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 from dotenv import load_dotenv
-from .database import store_chat_message, get_chat_history
+from database import store_chat_message, get_chat_history
 
 load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=True)
 
