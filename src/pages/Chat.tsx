@@ -180,23 +180,21 @@ export function Chat() {
       <div className="shrink-0 border-t border-gray-800 bg-gray-900/90 px-4 sm:px-6 py-5 sm:py-6">
         <div className="max-w-4xl mx-auto">
           <div className="relative">
-            <div className="relative flex items-center">
-              <input
-                type="text"
-                placeholder="Ask about projects, skills, or how to contact..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSend(); } }}
-                className="w-full h-12 sm:h-14 pl-4 sm:pl-5 pr-14 rounded-xl bg-gray-800 border border-gray-600 text-white placeholder-gray-500 text-base focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all"
-              />
-              <button
-                onClick={handleSend}
-                disabled={isLoading || !input.trim()}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-all flex items-center justify-center"
-              >
-                <Send size={20} strokeWidth={2} />
-              </button>
-            </div>
+            <input
+              type="text"
+              placeholder="Ask about projects, skills, or how to contact..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSend(); } }}
+              className="w-full h-12 sm:h-14 pl-4 sm:pl-5 pr-14 rounded-xl bg-gray-800 border border-gray-600 text-white placeholder-gray-500 text-base focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all"
+            />
+            <button
+              onClick={handleSend}
+              disabled={isLoading || !input.trim()}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-all flex items-center justify-center"
+            >
+              <Send size={20} strokeWidth={2} />
+            </button>
           </div>
           <p className="text-center text-gray-500 text-xs mt-3">
             Anyone can chat — no sign-up needed
