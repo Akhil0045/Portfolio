@@ -1,4 +1,4 @@
-import { Github, Linkedin, Mail, ArrowDown, Download } from 'lucide-react';
+import { Github, Linkedin, Mail, ArrowDown, Download, Bot } from 'lucide-react';
 import { ThreeBackground } from './ThreeBackground';
 import { motion } from 'motion/react';
 import Akhil_resume from '../assests/Akhil_resume.pdf';
@@ -15,10 +15,10 @@ export function Hero() {
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Three.js Background */}
       <ThreeBackground />
-      
+
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-gray-900/60 to-black/60"></div>
-      
+
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -43,55 +43,55 @@ export function Hero() {
               Computer Science Engineering Student
             </p>
             <p className="text-lg text-white/70 mb-8 max-w-xl">
-              Passionate about building innovative solutions with clean code and modern technologies. 
+              Passionate about building innovative solutions with clean code and modern technologies.
               Currently in my third year, specializing in full-stack development.
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 mb-8">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-8">
               <button
                 onClick={() => scrollToSection('projects')}
-                className="px-8 py-4 bg-white text-gray-900 rounded-xl hover:bg-gray-100 transition-all hover:scale-105 shadow-xl font-medium"
+                className="px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-gray-900 rounded-xl hover:bg-gray-100 transition-all hover:scale-105 shadow-xl font-medium"
               >
                 View My Work
               </button>
               <button
                 onClick={() => scrollToSection('contact')}
-                className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white rounded-xl hover:bg-white/20 transition-all border border-white/20 hover:scale-105 font-medium"
+                className="px-6 sm:px-8 py-3.5 sm:py-4 bg-white/10 backdrop-blur-sm text-white rounded-xl hover:bg-white/20 transition-all border border-white/20 hover:scale-105 font-medium"
               >
                 Hire Me
               </button>
               <a
                 href={Akhil_resume}
                 download="akhil_resume.pdf"
-                className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white rounded-xl hover:bg-white/20 transition-all border border-white/20 hover:scale-105 font-medium flex items-center gap-2"
+                className="px-6 sm:px-8 py-3.5 sm:py-4 bg-white/10 backdrop-blur-sm text-white rounded-xl hover:bg-white/20 transition-all border border-white/20 hover:scale-105 font-medium flex items-center gap-2.5"
               >
-                <Download size={20} />
+                <Download size={20} strokeWidth={1.5} className="shrink-0" />
                 <span>Resume</span>
               </a>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
               <a
                 href="https://github.com/Akhil0045"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/20 transition-all border border-white/20 hover:scale-110"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/10 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/20 transition-all border border-white/20 hover:scale-110"
               >
-                <Github size={20} />
+                <Github size={20} strokeWidth={1.5} />
               </a>
               <a
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/20 transition-all border border-white/20 hover:scale-110"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/10 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/20 transition-all border border-white/20 hover:scale-110"
               >
-                <Linkedin size={20} />
+                <Linkedin size={20} strokeWidth={1.5} />
               </a>
               <a
                 href="mailto:akhil87901@gmail.com"
-                className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/20 transition-all border border-white/20 hover:scale-110"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/10 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/20 transition-all border border-white/20 hover:scale-110"
               >
-                <Mail size={20} />
+                <Mail size={20} strokeWidth={1.5} />
               </a>
             </div>
           </motion.div>
@@ -106,7 +106,7 @@ export function Hero() {
             <div className="relative">
               {/* Animated border */}
               <div className="absolute -inset-4 bg-gradient-to-r from-gray-600 via-gray-400 to-gray-600 rounded-full opacity-75 blur-2xl animate-pulse"></div>
-              
+
               {/* Photo container */}
               <div className="relative w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden border-4 border-white/20 backdrop-blur-sm bg-white/5">
                 {/* Placeholder - Replace with your photo */}

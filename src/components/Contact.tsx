@@ -97,65 +97,65 @@ export function Contact() {
               <h3 className="text-2xl mb-8 text-white font-bold">Contact Information</h3>
               
               <div className="space-y-6">
-                <a href="mailto:akhil87901@gmail.com" className="flex items-start gap-4 group">
+                <a href="mailto:akhil87901@gmail.com" className="flex items-center gap-4 group">
                   <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                    <Mail className="text-white" size={20} />
+                    <Mail className="text-white" size={20} strokeWidth={1.5} />
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-400 mb-1">Email</p>
+                  <div className="min-w-0">
+                    <p className="text-sm text-gray-400 mb-0.5">Email</p>
                     <p className="text-white font-medium group-hover:text-gray-200 transition-colors break-all">
                       akhil87901@gmail.com
                     </p>
                   </div>
                 </a>
 
-                <a href="tel:+91 9044109957" className="flex items-start gap-4 group">
+                <a href="tel:+91 9044109957" className="flex items-center gap-4 group">
                   <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                    <Phone className="text-white" size={20} />
+                    <Phone className="text-white" size={20} strokeWidth={1.5} />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400 mb-1">Phone</p>
+                    <p className="text-sm text-gray-400 mb-0.5">Phone</p>
                     <p className="text-white font-medium group-hover:text-gray-200 transition-colors">
                       +91 9044109957
                     </p>
                   </div>
                 </a>
 
-                <div className="flex items-start gap-4">
+                <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                    <MapPin className="text-white" size={20} />
+                    <MapPin className="text-white" size={20} strokeWidth={1.5} />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400 mb-1">Location</p>
+                    <p className="text-sm text-gray-400 mb-0.5">Location</p>
                     <p className="text-white font-medium">India</p>
                   </div>
                 </div>
               </div>
 
               <div className="mt-8 pt-8 border-t border-white/10">
-                <p className="text-gray-300 mb-4 font-medium">Connect with me on</p>
-                <div className="flex gap-3">
+                <p className="text-gray-300 mb-4 font-medium">Connect with me</p>
+                <div className="flex gap-3 sm:gap-4">
                   <a
                     href="https://github.com/Akhil0045"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-12 h-12 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110"
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110"
                   >
-                    <Github size={20} />
+                    <Github size={20} strokeWidth={1.5} />
                   </a>
                   <a
                     href="https://www.linkedin.com/in/akhil-kumar-024562275/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-12 h-12 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110"
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110"
                   >
-                    <Linkedin size={20} />
+                    <Linkedin size={20} strokeWidth={1.5} />
                   </a>
                   <a
                     href="mailto:akhil87901@gmail.com"
-                    className="w-12 h-12 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110"
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110"
                   >
-                    <Mail size={20} />
+                    <Mail size={20} strokeWidth={1.5} />
                   </a>
                 </div>
               </div>
@@ -241,7 +241,7 @@ export function Contact() {
                 <button
                   type="submit"
                   disabled={isSending || isSent}
-                  className={`w-full px-8 py-4 rounded-xl transition-all font-medium flex items-center justify-center gap-2 group shadow-lg ${
+                  className={`w-full px-8 py-4 rounded-xl transition-all font-medium flex items-center justify-center gap-2.5 group shadow-lg ${
                     isSent ? 'bg-green-600 text-white' : 'bg-gray-900 text-white hover:bg-gray-800'
                   } disabled:opacity-50`}
                 >
@@ -250,12 +250,12 @@ export function Contact() {
                   ) : isSent ? (
                     <>
                       <span>Sent Successfully</span>
-                      <CheckCircle size={20} />
+                      <CheckCircle size={20} strokeWidth={1.5} className="shrink-0" />
                     </>
                   ) : (
                     <>
                       <span>Send Message</span>
-                      <Send size={20} className="group-hover:translate-x-1 transition-transform" />
+                      <Send size={20} strokeWidth={1.5} className="shrink-0 group-hover:translate-x-0.5 transition-transform" />
                     </>
                   )}
                 </button>

@@ -222,7 +222,7 @@ import QuickShow from '../assests/OuickShow.png';
 import Zerotrace from '../assests/Zerotrace1.jpeg';
 
 
-import { ExternalLink, github } from 'lucide-react';
+import { ExternalLink, Github } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useInView } from 'react-intersection-observer';
 
@@ -360,23 +360,23 @@ export function Projects() {
                     ))}
                   </div>
 
-                  <div className="flex gap-4 pt-4 border-t border-gray-100">
+                  <div className="flex flex-wrap gap-4 sm:gap-6 pt-5 border-t border-gray-100">
                     <a
                       href={project.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors font-medium"
+                      className="flex items-center gap-2.5 text-gray-700 hover:text-gray-900 transition-colors font-medium"
                     >
-                      <github size={20} />
+                      <Github size={18} strokeWidth={1.5} className="shrink-0" />
                       <span>Code</span>
                     </a>
                     <a
                       href={project.demo}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors font-medium"
+                      className="flex items-center gap-2.5 text-gray-700 hover:text-gray-900 transition-colors font-medium"
                     >
-                      <ExternalLink size={20} />
+                      <ExternalLink size={18} strokeWidth={1.5} className="shrink-0" />
                       <span>Live Demo</span>
                     </a>
                   </div>
